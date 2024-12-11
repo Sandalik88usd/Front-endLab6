@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Random Users</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        img {
+            width: 100px; /* Змінений розмір */
+            height: 100px; /* Змінений розмір */
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Random Users</h1>
+    <button id="fetchData">Get Users</button>
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Picture</th>
+                <th>Cell</th>
+                <th>City</th>
+                <th>Country</th>
+                <th>Postcode</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById('fetchData').addEventListener('click', () => {
+            fetch('https://randomuser.me/api/?results=5') // Отримуємо 5 користувачів
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const users = data.results;
+                    const tableBody = document.querySelector('#userTable tbody');
+                    tableBody.innerHTML = ''; // Очищуємо таблицю перед додаванням нових даних
+
+                    users.forEach((user, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td><img src="${user.picture.large}" alt="User Picture"></td>
+                            <td>${user.cell}</td>
+                            <td>${user.location.city}</td>
+                            <td>${user.location.country}</td>
+                            <td>${user.location.postcode}</td>
+                            <td>${user.email}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+        });
+    </script>
+</body>
+</html>
